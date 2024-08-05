@@ -5,19 +5,19 @@ describe('Login spec', () => {
 
   beforeEach(() => {
     loginPage = new TestUtil();
-    loginPage.visitLogin(); // Visite de la page de connexion avant chaque test
+    loginPage.visitLogin(); 
   });
 
-  it('components should be visible', () => {
+  it('Components should be displayed', () => {
     loginPage.inspectLoginFormVisibility();
   });
 
-  it('constructor should initialize the form', () => {
+  it('Constructor should initialize the form', () => {
     loginPage.inspectLoginFormInitialization();
   });
 
-  it('Submit button is disabled until all fields are filled correctly', () => {
-    // Vérifier que le bouton "Submit" est désactivé initialement
+  it('The submit button stays disabled until all fields are properly filled', () => {
+    // Verify that the "Submit" button is disabled initially
     cy.get('button[type="submit"]').should('be.disabled');
 
     loginPage.fillLoginForm('user@example.com', 'password');
@@ -31,7 +31,7 @@ describe('Login spec', () => {
   });
 
   it('Login successfull', () => {
-    // Interception de la requête POST vers /api/auth/login
+    // Intercept the POST request to /api/auth/login
     cy.intercept('POST', '/api/auth/login', {
       body: {
         id: 1,
@@ -42,7 +42,7 @@ describe('Login spec', () => {
       },
     });
 
-    // Interception de la requête GET vers /api/session
+    // Intercept the GET request to /api/session
     cy.intercept(
       {
         method: 'GET',
@@ -51,13 +51,13 @@ describe('Login spec', () => {
       []
     ).as('session');
 
-    loginPage.login('yoga@studio.com', 'test!1234'); // Appel de la méthode de connexion de la classe utilitaire
+    loginPage.login('yoga@studio.com', 'test!1234'); 
 
     cy.url().should('include', '/sessions');
   });
 
   it('Login unsuccessful - wrong credentials', () => {
-    // Interception de la requête POST vers /api/auth/login avec erreur 401
+    // Intercept the POST request to /api/auth/login with a 401 error
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 401,
       body: {
@@ -65,7 +65,7 @@ describe('Login spec', () => {
       },
     }).as('wrongLogin');
 
-    loginPage.login('wrong', 'wrongPassword'); // Appel de la méthode de connexion de la classe utilitaire
+    loginPage.login('wrong', 'wrongPassword'); 
 
     cy.wait('@wrongLogin');
 
@@ -78,23 +78,23 @@ describe('Register spec', () => {
 
   beforeEach(() => {
     loginPage = new TestUtil();
-    loginPage.visitRegister(); // Visite de la page de connexion avant chaque test
+    loginPage.visitRegister(); // Visit the login page before each test
   });
 
   it('components should be visible', () => {
     loginPage.inspectRegisterFormVisibility();
   });
 
-  it('constructor should initialize the form', () => {
+  it('Constructor should initialize the form', () => {
     loginPage.inspectRegisterFormInitialization();
   });
 
   it('Submit button is disabled until all fields are filled correctly', () => {
-    // Vérifier que le bouton "Submit" est désactivé initialement
+    // Verify that the "Submit" button is initially disabled
     cy.get('button[type="submit"]').should('be.disabled');
 
     loginPage.fillFirstNameField('New');
-    cy.get('button[type="submit"]').should('be.disabled'); // Vérifier que le bouton "Submit" est maintenant activé
+    cy.get('button[type="submit"]').should('be.disabled'); 
 
     loginPage.fillLastNameField('newUser');
     cy.get('button[type="submit"]').should('be.disabled');
@@ -104,11 +104,11 @@ describe('Register spec', () => {
 
     loginPage.fillPasswordField('password123');
 
-    // Vérifier que le bouton "Submit" est maintenant activé
+    // Check that the "Submit" button is active now
     cy.get('button[type="submit"]').should('not.be.disabled');
   });
 
-  it('Submit button is disabled if the email is invalid', () => {
+  it('The submit button is disabled if the email address is invalid', () => {
     loginPage.FillRegisterForm('New', 'newUser', 'wrongEmail', 'password123');
     cy.get('button[type="submit"]').should('be.disabled');
   });
@@ -131,12 +131,12 @@ describe('Register spec', () => {
       'password123'
     );
 
-    // cliquer sur le bouton "Submit"
+    // Click the "Submit" button
     cy.get('button[type="submit"]').click();
 
     cy.wait('@register');
 
-    // vérifier que l'utilisateur est redirigé vers la page de login
+    // Verify that the user is redirected to the login page
     cy.url().should('include', '/login');
   });
 });
@@ -146,7 +146,7 @@ describe('MeComponent', () => {
 
   beforeEach(() => {
     loginPage = new TestUtil();
-    loginPage.visitLogin(); // Visite de la page de connexion avant chaque test
+    loginPage.visitLogin(); 
 
     cy.intercept('POST', '/api/auth/login', {
       body: {
@@ -180,14 +180,14 @@ describe('MeComponent', () => {
       body: user,
     }).as('getUser');
 
-    loginPage.login('yoga@studio.com', 'test!1234'); // Appel de la méthode de connexion de la classe utilitaire
+    loginPage.login('yoga@studio.com', 'test!1234'); 
 
     // wait for the session request to complete
     cy.wait('@session');
 
     cy.url().should('include', '/sessions');
 
-    // mettre à jour le DOM pour que le bouton Account soit visible
+    // maj DOM 
     cy.contains('span.link', 'Account').should('be.visible');
 
     // click on link Account
@@ -203,7 +203,7 @@ describe('MeComponent', () => {
     cy.contains('Create at:').should('be.visible');
     cy.contains('Last update:').should('be.visible');
 
-    // Cliquez sur le bouton 'back' et vérifiez que vous êtes redirigé vers la page précédente
+    // click on 'back' 
     cy.get('button[mat-icon-button]').click();
     cy.url().should('not.include', '/me');
 
@@ -251,7 +251,7 @@ describe('Create Session, Update, Verify Details, and Delete Session', () => {
 
   it('Create, Update, Verify Details, and Delete Session', () => {
     loginPage = new TestUtil();
-    loginPage.visitLogin(); // Visite de la page de connexion avant chaque test
+    loginPage.visitLogin(); 
 
     // Intercept the login request and mock the response
     cy.intercept('POST', '/api/auth/login', {
@@ -388,8 +388,6 @@ describe('Create Session, Update, Verify Details, and Delete Session', () => {
 
     // Assert that the session details are displayed correctly
     cy.get('mat-card-title').should('contain', 'Session De Test');
-    // cy.get('mat-card-content').should('contain', 'Join our yoga session for a relaxing experience.');
-    // cy.get('mat-card-content').should('contain', 'July 10, 2023');
 
     // Click on the "Delete" button to delete the session
     cy.contains('Delete').click();
@@ -403,7 +401,7 @@ describe('Create Session, Update, Verify Details, and Delete Session', () => {
 });
 
 describe('Test the not found component', () => {
-  it('should redirect to the not found page', () => {
+  it('Should navigate to the not found page', () => {
     cy.visit('/not-found');
 
     cy.contains('Page not found').should('be.visible');
